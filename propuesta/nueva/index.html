@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Su propuesta Argos</title>
+<link rel="icon" href="../../assets/favicon.svg">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="../../assets/argos.css">
+<style>
+  .list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .list li { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: start; }
+  .list li::before { content: "✓"; color: var(--bajo); font-weight: 700; }
+  .gaps li::before { content: "✕"; color: var(--alto); }
+  .prod { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 14px; }
+  .f-id { display: flex; flex-direction: column; gap: 4px; font: 500 13px/1.4 var(--sans); color: var(--ink-muted); min-width: 0; }
+  .idrow { display: grid; grid-template-columns: 76px 1fr; gap: 8px; }
+  .prod label { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 4px; cursor: pointer; }
+  .prod label:has(input:checked) { border: 2px solid var(--navy); }
+  .prod b { font: 600 22px/1.2 var(--mono); color: var(--navy); }
+  .rec { justify-self: start; background: var(--bronce); color: var(--on-bronce); font: 600 11px/1 var(--sans); letter-spacing: .6px; text-transform: uppercase; padding: 4px 9px; border-radius: 999px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <img src="../../assets/logo.svg" alt="Argos Compliance">
+    <div class="tag">Su propuesta<br>3 pasos</div>
+  </header>
+
+  <h1>Reciba su propuesta</h1>
+  <p class="lede">Tres pasos y la tiene en pantalla, con lo que incluye el plan, la inversión y la opción de aceptarla.</p>
+
+  <details class="card" id="vend" hidden>
+    <summary>Asesor: <span id="v-name"></span></summary>
+    <div class="fields" style="margin-top:12px">
+      <label for="vn">Nombre<input id="vn"></label>
+      <label for="vw">WhatsApp, con 58 delante<input id="vw" inputmode="numeric" placeholder="584121234567"></label>
+    </div>
+    <button class="btn ghost" id="v-save" type="button" style="margin-top:10px">Usar este asesor</button>
+  </details>
+
+  <div class="card" id="diag-card" hidden>
+    <p class="label">Lo que encontramos en su diagnóstico</p>
+    <p id="diag-sum" style="margin-top:0"></p>
+    <ul class="list gaps" id="diag-list"></ul>
+  </div>
+
+  <nav class="steps-nav" aria-label="Pasos">
+    <button type="button" data-s="1" aria-current="step">1. Sus datos</button>
+    <button type="button" data-s="2">2. Su plan</button>
+    <button type="button" data-s="3">3. Revisión</button>
+  </nav>
+
+  <section class="card" data-step="1">
+    <h2>1. Sus datos</h2>
+    <div class="fields">
+      <label for="rs">Razón social o nombre completo *<input id="rs" autocomplete="organization"></label>
+      <div class="f-id"><span id="id-lbl">Identificación *</span>
+        <div class="idrow" role="group" aria-labelledby="id-lbl">
+          <select id="rift" aria-label="Tipo de identificación"><option>J</option><option>V</option><option>G</option><option>E</option></select>
+          <input id="rifn" aria-label="Número de identificación" inputmode="numeric" placeholder="Solo números">
+        </div><span class="small" id="rif-msg"></span></div>
+      <label for="sec">Sector
+        <select id="sec"><option value="" disabled selected>Seleccione su sector</option><option>Sociedad de Corretaje de Seguros</option><option>Sociedad de Corretaje de Reaseguro</option><option>Empresa de Seguros</option><option>Medicina Prepagada</option><option>Reaseguradora</option><option>Cooperativa con actividad aseguradora</option><option>Administradora de Riesgos</option><option>Financiadora de Primas</option><option>Sociedad de Ajustadores de Pérdidas</option><option>Abogado</option><option>Contador</option><option>Agente Inmobiliario</option><option>Inmobiliaria</option><option>Organización sin fines de lucro (OSFL)</option><option>Caja de Ahorro</option><option>Agencia de Viajes</option><option>Hotel</option><option>Otros</option></select></label>
+      <label for="ct">Condición tributaria
+        <select id="ct"><option>Contribuyente ordinario</option><option>Contribuyente especial</option></select></label>
+      <label for="con">Su nombre *<input id="con" autocomplete="name"></label>
+      <label for="car">Su cargo<input id="car" placeholder="Oficial de cumplimiento" autocomplete="organization-title"></label>
+      <label for="mail">Correo *<input id="mail" type="email" autocomplete="email"></label>
+      <label for="tel">Teléfono o WhatsApp<input id="tel" inputmode="tel" autocomplete="tel"></label>
+      <label for="ase"><span>Su asesor <span class="small muted">(opcional)</span></span><input id="ase" placeholder="Nombre de quien le atiende" autocomplete="off"></label>
+    </div>
+  </section>
+
+  <section class="card" data-step="2" hidden>
+    <h2>2. Su plan</h2>
+    <p class="label" style="margin-top:12px">Lo que incluye</p>
+    <ul class="list" id="alc"></ul>
+    <div class="prod">
+      <label><span><input type="radio" name="prod" value="mensual" checked> Plan mensual</span><b>US$200 <small class="muted">+ IVA / mes</small></b><span class="small muted">Sin permanencia. Instalación única: <span class="inst-amt">US$600</span> + IVA, con 16 horas de configuración y capacitación.</span></label>
+      <label><span><input type="radio" name="prod" value="semestral"> Plan semestral</span><b>US$180 <small class="muted">+ IVA / mes</small></b><span class="small muted">Se paga US$1.080 + IVA por adelantado cada 6 meses. Ahorra 10% frente al mensual. Instalación única: <span class="inst-amt">US$600</span> + IVA.</span></label>
+      <label><span class="rec">Mejor precio</span><span><input type="radio" name="prod" value="anual"> Plan anual</span><b>US$170 <small class="muted">+ IVA / mes</small></b><span class="small muted">Se paga US$2.040 + IVA por adelantado cada 12 meses. Ahorra 15% frente al mensual. Instalación única: <span class="inst-amt">US$600</span> + IVA.</span></label>
+      <label><span><input type="radio" name="prod" value="unica"> Consulta única</span><b>US$20 <small class="muted">+ IVA / consulta</small></b><span class="small muted">Sin plan ni instalación.</span>
+        <span class="f" id="q-wrap">Cantidad de consultas <input id="q" type="number" min="1" value="1" style="max-width:120px"></span></label>
+    </div>
+    <div id="money" style="margin-top:14px"></div>
+    <p class="small muted">Montos en US$ como moneda de cuenta, pagaderos en bolívares a la tasa oficial del BCV del día del pago.</p>
+  </section>
+
+  <section class="card" data-step="3" hidden>
+    <h2>3. Revisión</h2>
+    <div id="review"></div>
+    <label class="row small" style="margin-top:14px;align-items:flex-start;flex-wrap:nowrap"><input type="checkbox" id="cons" style="margin-top:4px">
+      <span>Autorizo a Argos Compliance a registrar los datos de este formulario en su sistema comercial para preparar mi propuesta y contactarme sobre ella. Puedo pedir que los corrijan o los eliminen escribiendo a mi asesor, en ejercicio del derecho de habeas data (artículo 28 de la Constitución).</span></label>
+    <div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label for="web">No llenar<input id="web" tabindex="-1" autocomplete="off"></label></div>
+    <div class="warn" id="missing" hidden style="margin-top:12px"></div>
+    <div class="row" style="margin-top:14px">
+      <button class="btn accent" id="gen" type="button" style="font-size:16px;padding:16px 22px">Generar mi propuesta →</button>
+    </div>
+  </section>
+
+  <div class="row no-print">
+    <button class="btn ghost" id="prev" type="button">Anterior</button>
+    <button class="btn primary" id="next" type="button">Siguiente</button>
+  </div>
+</div>
+
+<script src="../../assets/aliados.js"></script>
+<script src="../../assets/argos.js"></script>
+<script>
+(function () {
+  // La instalación del plan depende del sector elegido (empresas de seguros y reaseguradoras: US$1.200).
+  document.addEventListener("change", function (e) {
+    if (e.target.id === "sec") document.querySelectorAll(".inst-amt").forEach(function (s) { s.textContent = "US$" + A.instalacionPara(e.target.value).toLocaleString("es-VE"); });
+  });
+  var A = window.Argos, $ = function (id) { return document.getElementById(id); }, step = 1, diag = null;
+  var qp = new URLSearchParams(location.search);
+
+  // Asesor: el del código de aliado (?a=…), si no, el del enlace (?wa=…&n=…), si no, el guardado con ?v=1, si no, en blanco.
+  // El código queda fijo en la propuesta; el nombre lo puede editar quien hace la cotización.
+  function asesor() {
+    var code = (qp.get("a") || "").toUpperCase(), ali = (window.ARGOS_ALIADOS || {})[code];
+    if (ali) return { nombre: ali.n, wa: ali.w, c: code };
+    var wa = (qp.get("wa") || "").replace(/\D/g, "");
+    if (/^\d{10,13}$/.test(wa)) return { nombre: (qp.get("n") || "Asesor de Argos").slice(0, 60), wa: wa };
+    if (qp.get("v") === "1" && A.store("vendedor")) return A.store("vendedor");
+    return { nombre: "", wa: A.WA_ARGOS };
+  }
+  function iniciales(n) { return (n.match(/\b[A-ZÁÉÍÓÚÑ]/g) || ["A", "R"]).slice(0, 2).join("").normalize("NFD").replace(/[^A-Z]/g, "") || "AR"; }
+  var ase = asesor();
+  $("ase").value = ase.nombre;
+  if (qp.get("v") === "1") {
+    $("vend").hidden = false; $("vn").value = ase.nombre; $("vw").value = ase.wa; $("v-name").textContent = ase.nombre + " · " + A.waFmt(ase.wa);
+    $("v-save").addEventListener("click", function () { ase = { nombre: $("vn").value.trim() || ase.nombre, wa: $("vw").value.replace(/\D/g, "") || ase.wa }; A.store("vendedor", ase); $("v-name").textContent = ase.nombre + " · " + A.waFmt(ase.wa); $("ase").value = ase.nombre; $("vend").open = false; });
+  }
+
+  // Diagnóstico de origen (#d=…): se incluyen todas las brechas.
+  var m = location.hash.match(/d=([\w-]+)/);
+  if (m) diag = A.b64dec(m[1]);
+  if (diag && diag.gaps && diag.gaps.length) {
+    $("diag-card").hidden = false;
+    $("diag-sum").innerHTML = "Nivel de riesgo de cumplimiento: <b class='c-" + A.esc(diag.lv) + "'>" + A.esc(diag.lv) + "</b> (" + A.esc(diag.pct) + "% de exposición). Argos cubre " +
+      diag.gaps.filter(function (g) { return g[1]; }).length + " de sus " + diag.gaps.length + " brechas.";
+    $("diag-list").innerHTML = diag.gaps.map(function (g) { return "<li><span>" + A.esc(g[0]) + (g[1] ? ' <span class="chip argos">Argos lo cubre</span>' : ' <span class="chip">Acción de su empresa</span>') + (g[2] ? ' <span class="chip only">Solo en Argos</span>' : "") + "</span></li>"; }).join("");
+  }
+
+  $("alc").innerHTML = A.ALCANCE.map(function (a) { return "<li><span>" + A.esc(a.t) + "</span></li>"; }).join("");
+
+  function prod() { return document.querySelector('input[name="prod"]:checked').value; }
+  // Pedido elegido: "unica" o un plan ("mensual" | "semestral" | "anual").
+  function pedido() { return prod() === "unica" ? { prod: "unica", q: Math.max(1, +$("q").value || 1) } : { prod: "plan", plazo: prod() }; }
+  function money() {
+    var mm = A.montos(Object.assign({ sec: $("sec").value }, pedido()));
+    $("money").innerHTML = '<table class="money"><tbody>' + mm.lines.map(function (l) { return "<tr><td>" + A.esc(l.t) + '</td><td class="n">' + A.usd(l.m) + "</td></tr>"; }).join("") +
+      '<tr><td>IVA (16%)</td><td class="n">' + A.usd(mm.iva) + '</td></tr><tr class="total"><td>' + (prod() !== "unica" ? "Primer pago (plan + instalación)" : "Total") + '</td><td class="n">' + A.usd(mm.total) + "</td></tr></tbody></table>";
+    $("q-wrap").style.opacity = prod() === "unica" ? 1 : .4;
+  }
+  document.querySelectorAll('input[name="prod"]').forEach(function (r) { r.addEventListener("change", money); });
+  $("q").addEventListener("input", money); $("sec").addEventListener("change", money); money();
+
+  // Identificación: tipo (J, V, G o E) y número, sin límite de dígitos.
+  function idNum() { return $("rifn").value.replace(/[\s.\-]/g, ""); }
+  function rifOk(v) { return /^[JVGE]-\d+$/.test(v || ""); }
+  $("rifn").addEventListener("blur", function () {
+    var n = idNum(); if (/^\d+$/.test(n)) this.value = n;
+    $("rif-msg").textContent = !this.value || /^\d+$/.test(n) ? "" : "Escriba solo números.";
+    $("rif-msg").style.color = "var(--moderado)";
+  });
+  var F = ["rs", "sec", "ct", "con", "car", "mail", "tel"];
+  function data() {
+    var c = {}; F.forEach(function (k) { c[k] = $(k).value.trim(); });
+    c.rif = idNum() ? $("rift").value + "-" + idNum() : "";
+    var pd = pedido();
+    return { v: 1, c: c, alc: A.ALCANCE.map(function (a) { return a.k; }), prod: pd.prod, plazo: pd.plazo || null, q: Math.max(1, +$("q").value || 1),
+      d: diag && diag.gaps ? { lv: diag.lv, pct: diag.pct, h: +diag.h || 0, hl: +diag.hl || 0, gaps: diag.gaps } : null, s: { n: $("ase").value.trim().slice(0, 60), w: ase.wa, c: ase.c || "" } };
+  }
+  function missing() {
+    var p = data(), miss = [];
+    if (!p.c.rs) miss.push("razón social o nombre"); if (!rifOk(p.c.rif)) miss.push("el número de identificación (solo números)"); if (!p.c.sec) miss.push("sector"); if (!p.c.con) miss.push("su nombre"); if (!/.+@.+\..+/.test(p.c.mail)) miss.push("correo"); if (!$("cons").checked) miss.push("la autorización de uso de datos");
+    return miss;
+  }
+  function review() {
+    var p = data(), mm = A.montos(p), miss = missing();
+    $("missing").hidden = !miss.length; $("missing").textContent = "Falta completar: " + miss.join(", ") + ".";
+    $("gen").disabled = !!miss.length;
+    $("review").innerHTML = '<div class="kv" style="border-top:0;margin-top:0;padding-top:0">' +
+      "<div><span>Empresa</span><b>" + A.esc(p.c.rs || "—") + "</b></div><div><span>Identificación</span><b>" + A.esc(p.c.rif || "—") + "</b></div>" +
+      "<div><span>Contacto</span><b>" + A.esc(p.c.con || "—") + "</b></div><div><span>Correo</span><b>" + A.esc(p.c.mail || "—") + "</b></div>" +
+      "<div><span>Plan</span><b>" + (p.prod === "plan" ? A.esc(A.PLAN[p.plazo].t) : "Consulta única × " + p.q) + "</b></div><div><span>" + (p.prod === "plan" ? "Pago inicial" : "Total") + "</span><b>" + A.usd(mm.total) + "</b></div>" +
+      "<div><span>Su asesor</span><b>" + A.esc(p.s.n || "—") + "</b></div><div><span>Vigencia</span><b>15 días</b></div></div>";
+  }
+  function go(s) {
+    step = Math.min(3, Math.max(1, s));
+    document.querySelectorAll("[data-step]").forEach(function (el) { el.hidden = +el.dataset.step !== step; });
+    document.querySelectorAll(".steps-nav button").forEach(function (b) { if (+b.dataset.s === step) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current"); });
+    $("prev").disabled = step === 1; $("next").hidden = step === 3;
+    if (step === 3) review();
+    window.scrollTo(0, document.querySelector(".steps-nav").offsetTop - 12);
+  }
+  document.querySelectorAll(".steps-nav button").forEach(function (b) { b.addEventListener("click", function () { go(+b.dataset.s); }); });
+  $("prev").addEventListener("click", function () { go(step - 1); });
+  $("next").addEventListener("click", function () { go(step + 1); });
+  ["input", "change"].forEach(function (ev) { document.addEventListener(ev, function () { if (step === 3) review(); }); });
+
+  $("gen").addEventListener("click", function () {
+    if (missing().length) return;
+    var p = data();
+    p.num = A.numero(iniciales(p.s.n)); p.f = A.hoy(); p.vig = A.VIGENCIA_DIAS;
+    p.cons = { v: "2026-10-15", at: new Date().toISOString() };
+    var url = new URL("../index.html", location.href).href + "#p=" + A.b64enc(p);
+    A.lead({ t: "new", p: p, url: url, hp: $("web").value });
+    location.href = url;
+  });
+  go(1); window.scrollTo(0, 0);
+})();
+</script>
+</body>
+</html>
