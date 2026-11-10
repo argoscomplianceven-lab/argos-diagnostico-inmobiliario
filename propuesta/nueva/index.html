@@ -143,7 +143,13 @@
     $("diag-card").hidden = false;
     $("diag-sum").innerHTML = "Nivel de riesgo de cumplimiento: <b class='c-" + A.esc(diag.lv) + "'>" + A.esc(diag.lv) + "</b> (" + A.esc(diag.pct) + "% de exposición). Argos cubre " +
       diag.gaps.filter(function (g) { return g[1]; }).length + " de sus " + diag.gaps.length + " brechas.";
-    $("diag-list").innerHTML = diag.gaps.map(function (g) { return "<li><span>" + A.esc(g[0]) + (g[1] ? ' <span class="chip argos">Argos lo cubre</span>' : ' <span class="chip">Acción de su empresa</span>') + (g[2] ? ' <span class="chip only">Solo en Argos</span>' : "") + "</span></li>"; }).join("");
+    $("diag-list").innerHTML = diag.gaps.map(function (g) { return "<li><span>" + A.esc(g[0]) + (g[1] ? ' <span class="chip argos">Argos lo cubre</span>' : ' <span class="chip">Lo cubre la asesoría</span>') + (g[2] ? ' <span class="chip only">Solo en Argos</span>' : "") + "</span></li>"; }).join("");
+  }
+
+  // Sector que trae el diagnóstico inmobiliario: queda preseleccionado y ajusta la instalación.
+  if (diag && diag.sec && [].some.call($("sec").options, function (o) { return o.text === diag.sec; })) {
+    $("sec").value = diag.sec;
+    document.querySelectorAll(".inst-amt").forEach(function (s) { s.textContent = "US$" + A.instalacionPara(diag.sec).toLocaleString("es-VE"); });
   }
 
   $("alc").innerHTML = A.ALCANCE.map(function (a) { return "<li><span>" + A.esc(a.t) + "</span></li>"; }).join("");
